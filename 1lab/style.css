@@ -1,0 +1,175 @@
+/* Базовые стили для темной темы */
+body.dark-theme {
+  background: #2f2e2e;
+  color: white;
+}
+
+body.light-theme {
+  background: #f5f5f5;
+  color: #333;
+}
+
+/* Контейнер для выбора темы */
+.theme-selector-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
+
+.theme-select {
+  padding: 15px 75px;
+  border-radius: 15px;
+  background: #868889;
+  color: white;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  
+  outline: none;
+}
+
+.theme-select:hover {
+  background: #616161;
+}
+
+/* Стили калькулятора для обеих тем */
+.calculator-container {
+  background: #868889;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+/* Кнопки калькулятора */
+.my-btn { 
+  font-weight: 1000;
+  margin-right: 5px;
+  margin-top: 5px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: #515151;
+  color: white;
+  font-size: 1.5rem;
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: pointer;
+  user-select: none;
+} 
+
+.my-btn:hover {
+  background: rgb(233, 8, 8);
+}
+
+.my-btn:active {
+  filter: brightness(130%);
+}
+
+.my-btn.primary { 
+  background: #b6b5b5;
+}
+
+.my-btn.secondary { 
+  background: #a6a6a6;
+}
+
+.my-btn.execute { 
+  width: 110px;
+  border-radius: 34px;
+}
+
+/* Экран результата */
+.result { 
+  width: 220px;
+  height: 70px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  padding-right: 10px;
+  background: rgb(73, 73, 73);
+  text-align: right;
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Текстовый контейнер */
+.text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  min-height: 10vh;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  margin-top: 15px; 
+}
+
+.text-item {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 1000;
+  color: rgb(233, 8, 8);
+  text-decoration: none;
+}
+
+.text-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Стили для светлой темы */
+body.light-theme .calculator-container {
+  background: #e0e0e0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .my-btn {
+  background: #ffffff;
+  color: #333;
+  border: 2px solid #ddd;
+}
+
+body.light-theme .my-btn:hover {
+  background: #c63434;
+  color: white;
+}
+
+body.light-theme .my-btn.primary {
+  background: #d31c1c;
+  color: #333;
+}
+
+body.light-theme .my-btn.secondary {
+  background: #f4f4f4;
+}
+
+body.light-theme .result {
+  background: #ffffff;
+  color: #333;
+  border: 2px solid #ddd;
+}
+
+body.light-theme .theme-select {
+  background: #e0e0e0;
+  color: #333;
+  border-color: #ddd;
+}
+
+body.light-theme .text-item {
+  color: #d31c1c;
+}
