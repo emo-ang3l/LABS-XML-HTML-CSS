@@ -16,9 +16,9 @@ class Card {
     lineHeight: "1"
   };
 
-  getHTML(e) {
+  getHTML(e, isSelected) {
     return `
-      <div class="card m-2 card-hover" style="width: 330px; position: relative; border-radius: 2rem; overflow: hidden; background: #f8f9fa;">
+      <div class="card m-2 card-hover ${isSelected ? 'border' : ''}" style="width: 330px; position: relative; border-radius: 2rem; overflow: hidden; background: #f8f9fa; ${isSelected ? 'border: 2px solid #7e0606;' : ''}">
         <div style="position: relative; width: 100%; height: 550px; overflow: hidden; border-radius: 0.5rem;">
           ${e.model ? `<div id="model-${e.id}" style="width: 100%; height: 100%;"></div>` : `<img class="card-img-top card-image" src="${e.src}" alt="${e.title}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0.5rem; transition: transform 0.5s ease;">`}
           <div style="position: absolute; top: 12px; left: 10px; right: 10px; padding: ${this.textStyles.padding}; color: ${this.textStyles.color}; text-shadow: ${this.textStyles.textShadow}; text-align: ${this.textStyles.textAlign}; line-height: ${this.textStyles.lineHeight};">
@@ -26,7 +26,8 @@ class Card {
             <p class="card-text" style="font-size: ${this.textStyles.fontSizeText}; font-weight: ${this.textStyles.fontWeightText}; line-height: ${this.textStyles.lineHeight};">${e.text}</p>
           </div>
           <div style="position: absolute; bottom: 20px; left: 95px; right: 95px;">
-            <button class="btn w-100" id="click-card-${e.id}" data-id="${e.id}" style="border-radius: 1rem; background-color: #ad0909ff; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">Подробнее</button>
+            <button class="btn w-100 select-button" id="select-card-${e.id}" data-id="${e.id}" style="border-radius: 1rem; background-color: ${isSelected ? '#7e0606' : '#ad0909ff'}; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">${isSelected ? 'Выбрано' : 'Выбрать'}</button>
+            <button class="btn w-100 mt-2" id="click-card-${e.id}" data-id="${e.id}" style="border-radius: 1rem; background-color: #ad0909ff; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">Подробнее</button>
           </div>
         </div>
       </div>
@@ -37,10 +38,16 @@ class Card {
     `;
   }
 
-  addListeners(e, i) {
-    const button = document.getElementById(`click-card-${e.id}`);
-    if (button) {
-      button.addEventListener("click", i);
+  addListeners(e, selectCallback, detailCallback) {
+    const selectButton = document.getElementById(`select-card-${e.id}`);
+    if (selectButton) {
+      selectButton.addEventListener("click", selectCallback);
+    } else {
+      console.warn(`Select button select-card-${e.id} not found`);
+    }
+    const detailButton = document.getElementById(`click-card-${e.id}`);
+    if (detailButton) {
+      detailButton.addEventListener("click", detailCallback);
     } else {
       console.warn(`Button click-card-${e.id} not found`);
     }
@@ -71,10 +78,10 @@ class Card {
     }, undefined, err => console.error('GLTFLoader error:', err));
   }
 
-  render(e, i) {
-    const o = this.getHTML(e);
+  render(e, selectCallback, detailCallback, isSelected) {
+    const o = this.getHTML(e, isSelected);
     this.parent.insertAdjacentHTML("beforeend", o);
-    this.addListeners(e, i);
+    this.addListeners(e, selectCallback, detailCallback);
     if (e.model) this.render3D(`model-${e.id}`, e.model);
   }
 }
@@ -110,7 +117,8 @@ class DetailCard {
                     <button class="accordion-button" type="button" 
                             data-bs-toggle="collapse" 
                             data-bs-target="#collapseOne-${e.id}" 
-                            aria-expanded="true" aria-controls="collapseOne-${e.id}">
+                            aria-expanded="true" aria-controls="collapseOne-${e.id}"
+                            style="background-color: #ad0909; color: #fff; font-weight: bold;">
                       История
                     </button>
                   </h2>
@@ -118,7 +126,7 @@ class DetailCard {
                        class="accordion-collapse collapse show" 
                        aria-labelledby="headingOne-${e.id}" 
                        data-bs-parent="#accordion-${e.id}">
-                    <div class="accordion-body" style="font-size: 0.95rem; color: #343a40;">
+                    <div class="accordion-body" style="font-size: 0.95rem; color: #343a40; border-left: 3px solid #ad0909;">
                       ${e.history || 'История не указана'}
                     </div>
                   </div>
@@ -128,7 +136,8 @@ class DetailCard {
                     <button class="accordion-button collapsed" type="button" 
                             data-bs-toggle="collapse" 
                             data-bs-target="#collapseTwo-${e.id}" 
-                            aria-expanded="false" aria-controls="collapseTwo-${e.id}">
+                            aria-expanded="false" aria-controls="collapseTwo-${e.id}"
+                            style="background-color: #ad0909; color: #fff; font-weight: bold;">
                       Характеристики
                     </button>
                   </h2>
@@ -136,7 +145,7 @@ class DetailCard {
                        class="accordion-collapse collapse" 
                        aria-labelledby="headingTwo-${e.id}" 
                        data-bs-parent="#accordion-${e.id}">
-                    <div class="accordion-body" style="font-size: 0.95rem; color: #343a40;">
+                    <div class="accordion-body" style="font-size: 0.95rem; color: #343a40; border-left: 3px solid #ad0909;">
                       ${e.traits || 'Характеристики не указаны'}
                     </div>
                   </div>
@@ -146,7 +155,8 @@ class DetailCard {
                     <button class="accordion-button collapsed" type="button" 
                             data-bs-toggle="collapse" 
                             data-bs-target="#collapseThree-${e.id}" 
-                            aria-expanded="false" aria-controls="collapseThree-${e.id}">
+                            aria-expanded="false" aria-controls="collapseThree-${e.id}"
+                            style="background-color: #ad0909; color: #fff; font-weight: bold;">
                       Уход
                     </button>
                   </h2>
@@ -154,7 +164,7 @@ class DetailCard {
                        class="accordion-collapse collapse" 
                        aria-labelledby="headingThree-${e.id}" 
                        data-bs-parent="#accordion-${e.id}">
-                    <div class="accordion-body" style="font-size: 0.95rem; color: #343a40;">
+                    <div class="accordion-body" style="font-size: 0.95rem; color: #343a40; border-left: 3px solid #ad0909;">
                       ${e.care || 'Уход не указан'}
                     </div>
                   </div>
@@ -164,6 +174,16 @@ class DetailCard {
           </div>
         </div>
       </div>
+      <style>
+        .accordion-button:not(.collapsed) {
+          background-color: #7e0606;
+          color: #fff;
+        }
+        .accordion-button:focus {
+          border-color: #ad0909;
+          box-shadow: 0 0 0 0.25rem rgba(173, 9, 9, 0.5);
+        }
+      </style>
     `;
   }
 
@@ -259,10 +279,235 @@ class Header {
   }
 }
 
+class AddPage {
+  constructor(parent) {
+    this.parent = parent;
+  }
+
+  get pageRoot() {
+    return document.getElementById("add-page");
+  }
+
+  getHTML() {
+    return `
+      <div id="header"></div>
+      <div id="add-page" class="container mt-3">
+        <h2 class="mb-4">Добавить новую породу</h2>
+        <form id="stockForm">
+          <div class="mb-3">
+            <label for="src" class="form-label">URL изображения</label>
+            <input type="text" class="form-control" id="src" required>
+          </div>
+          <div class="mb-3">
+            <label for="title" class="form-label">Название</label>
+            <input type="text" class="form-control" id="title" required>
+          </div>
+          <div class="mb-3">
+            <label for="text" class="form-label">Описание</label>
+            <textarea class="form-control" id="text" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="history" class="form-label">История</label>
+            <textarea class="form-control" id="history" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="traits" class="form-label">Характеристики</label>
+            <textarea class="form-control" id="traits" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="care" class="form-label">Уход</label>
+            <textarea class="form-control" id="care" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="background-color: #ad0909; border-color: #ad0909;">Сохранить</button>
+        </form>
+      </div>
+    `;
+  }
+
+  clickBack() {
+    new MainPage(this.parent).render();
+  }
+
+  addListeners() {
+    const stockForm = document.getElementById('stockForm');
+    if (stockForm) {
+      stockForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        console.log('Add form submitted');
+        const body = {
+          src: document.getElementById('src').value,
+          title: document.getElementById('title').value,
+          text: document.getElementById('text').value,
+          history: document.getElementById('history').value,
+          traits: document.getElementById('traits').value,
+          care: document.getElementById('care').value
+        };
+        console.log('Sending POST request:', { url: 'http://localhost:3000/stocks', body });
+        try {
+          const response = await fetch('http://localhost:3000/stocks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          });
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to save: ${response.status} ${response.statusText} - ${errorText}`);
+          }
+          console.log('Data saved successfully');
+          new MainPage(this.parent).render();
+        } catch (error) {
+          console.error('Ошибка сохранения:', error);
+          alert(`Ошибка сохранения данных: ${error.message}`);
+        }
+      });
+    } else {
+      console.warn('Stock form not found');
+    }
+  }
+
+  render() {
+    this.parent.innerHTML = "";
+    const e = this.getHTML();
+    this.parent.insertAdjacentHTML("beforeend", e);
+    new Header(document.getElementById("header")).render();
+    new BackButton(this.pageRoot).render(this.clickBack.bind(this));
+    this.addListeners();
+  }
+}
+
+class EditPage {
+  constructor(parent, id) {
+    this.parent = parent;
+    this.id = parseInt(id);
+  }
+
+  get pageRoot() {
+    return document.getElementById("edit-page");
+  }
+
+  getHTML(data) {
+    return `
+      <div id="header"></div>
+      <div id="edit-page" class="container mt-3">
+        <h2 class="mb-4">Редактировать породу</h2>
+        <form id="stockForm">
+          <input type="hidden" id="stockId" value="${data.id}">
+          <div class="mb-3">
+            <label for="src" class="form-label">URL изображения</label>
+            <input type="text" class="form-control" id="src" value="${data.src || ''}" required>
+          </div>
+          <div class="mb-3">
+            <label for="title" class="form-label">Название</label>
+            <input type="text" class="form-control" id="title" value="${data.title || ''}" required>
+          </div>
+          <div class="mb-3">
+            <label for="text" class="form-label">Описание</label>
+            <textarea class="form-control" id="text" required>${data.text || ''}</textarea>
+          </div>
+          <div class="mb-3">
+            <label for="history" class="form-label">История</label>
+            <textarea class="form-control" id="history" required>${data.history || ''}</textarea>
+          </div>
+          <div class="mb-3">
+            <label for="traits" class="form-label">Характеристики</label>
+            <textarea class="form-control" id="traits" required>${data.traits || ''}</textarea>
+          </div>
+          <div class="mb-3">
+            <label for="care" class="form-label">Уход</label>
+            <textarea class="form-control" id="care" required>${data.care || ''}</textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="background-color: #ad0909; border-color: #ad0909;">Сохранить</button>
+        </form>
+      </div>
+    `;
+  }
+
+  async getData() {
+    try {
+      console.log('Fetching data for ID:', this.id, 'Type:', typeof this.id);
+      const response = await fetch(`http://localhost:3000/stocks/${this.id}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch data for ID ${this.id}: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+      const data = await response.json();
+      console.log('Fetched stock data for ID:', this.id, data);
+      return {
+        ...data,
+        history: data.history || 'История не указана',
+        traits: data.traits || 'Характеристики не указаны',
+        care: data.care || 'Уход не указан'
+      };
+    } catch (error) {
+      console.error('Ошибка загрузки данных:', error);
+      return {
+        id: this.id,
+        src: '',
+        title: 'Не найдено',
+        text: 'Данные недоступны',
+        history: 'История не указана',
+        traits: 'Характеристики не указаны',
+        care: 'Уход не указан'
+      };
+    }
+  }
+
+  clickBack() {
+    new MainPage(this.parent).render();
+  }
+
+  addListeners() {
+    const stockForm = document.getElementById('stockForm');
+    if (stockForm) {
+      stockForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        console.log('Edit form submitted');
+        const body = {
+          src: document.getElementById('src').value,
+          title: document.getElementById('title').value,
+          text: document.getElementById('text').value,
+          history: document.getElementById('history').value,
+          traits: document.getElementById('traits').value,
+          care: document.getElementById('care').value
+        };
+        console.log('Sending PATCH request:', { url: `http://localhost:3000/stocks/${this.id}`, body });
+        try {
+          const response = await fetch(`http://localhost:3000/stocks/${this.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          });
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to update: ${response.status} ${response.statusText} - ${errorText}`);
+          }
+          console.log('Data updated successfully');
+          new MainPage(this.parent).render();
+        } catch (error) {
+          console.error('Ошибка обновления:', error);
+          alert(`Ошибка обновления данных: ${error.message}`);
+        }
+      });
+    } else {
+      console.warn('Stock form not found');
+    }
+  }
+
+  async render() {
+    this.parent.innerHTML = "";
+    const data = await this.getData();
+    const e = this.getHTML(data);
+    this.parent.insertAdjacentHTML("beforeend", e);
+    new Header(document.getElementById("header")).render();
+    new BackButton(this.pageRoot).render(this.clickBack.bind(this));
+    this.addListeners();
+  }
+}
+
 class ProductPage {
   constructor(parent, id) {
     this.parent = parent;
-    this.id = parseInt(id); // Преобразуем id в число
+    this.id = parseInt(id);
   }
 
   get pageRoot() {
@@ -324,6 +569,7 @@ class ProductPage {
 class MainPage {
   constructor(parent) {
     this.parent = parent;
+    this.selectedCardId = null;
   }
 
   get pageRoot() {
@@ -334,7 +580,8 @@ class MainPage {
     return `
       <div id="header"></div>
       <div class="container mt-3">
-        <button class="btn btn-danger mb-3" id="add-button">+</button>
+        <button class="btn btn-danger mb-3" id="add-button">Добавить породу</button>
+        ${this.selectedCardId !== null ? '<button class="btn btn-primary mb-3 ms-2" id="edit-button" style="background-color: #ad0909; border-color: #ad0909;">Редактировать</button>' : ''}
       </div>
       <div id="main-page" class="card-container"></div>
       <style>
@@ -351,22 +598,6 @@ class MainPage {
           .card-container {
             grid-template-columns: 1fr;
           }
-        }
-        .accordion-button {
-          background-color: #ad0909;
-          color: #fff;
-          font-weight: bold;
-        }
-        .accordion-button:not(.collapsed) {
-          background-color: #7e0606;
-          color: #fff;
-        }
-        .accordion-button:focus {
-          border-color: #ad0909;
-          box-shadow: 0 0 0 0.25rem rgba(173, 9, 9, 0.5);
-        }
-        .accordion-body {
-          border-left: 3px solid #ad0909;
         }
       </style>
     `;
@@ -393,14 +624,34 @@ class MainPage {
     }
   }
 
+  selectCard(e) {
+    const id = parseInt(e.target.dataset.id);
+    console.log('Selected card ID:', id, 'Type:', typeof id);
+    if (isNaN(id)) {
+      console.error('Invalid ID for selection:', e.target.dataset.id);
+      return;
+    }
+    this.selectedCardId = id;
+    this.render();
+  }
+
   clickCard(e) {
-    const i = parseInt(e.target.dataset.id); // Преобразуем id в число
-    console.log('Navigating to product page with ID:', i, 'Type:', typeof i);
-    if (isNaN(i)) {
+    const id = parseInt(e.target.dataset.id);
+    console.log('Navigating to product page with ID:', id, 'Type:', typeof id);
+    if (isNaN(id)) {
       console.error('Invalid ID for navigation:', e.target.dataset.id);
       return;
     }
-    new ProductPage(this.parent, i).render();
+    new ProductPage(this.parent, id).render();
+  }
+
+  clickEdit() {
+    if (this.selectedCardId === null) {
+      console.warn('No card selected for editing');
+      return;
+    }
+    console.log('Navigating to edit page with ID:', this.selectedCardId);
+    new EditPage(this.parent, this.selectedCardId).render();
   }
 
   addListeners() {
@@ -408,27 +659,16 @@ class MainPage {
     if (addButton) {
       addButton.addEventListener('click', () => {
         console.log('Add button clicked');
-        const form = document.getElementById('stockForm');
-        if (form) {
-          form.reset();
-          const stockId = document.getElementById('stockId');
-          if (stockId) stockId.value = '';
-        } else {
-          console.warn('Stock form not found');
-        }
-        const modalElement = document.getElementById('stockModal');
-        if (modalElement) {
-          const modal = new bootstrap.Modal(modalElement, {
-            backdrop: 'static',
-            keyboard: false
-          });
-          modal.show();
-        } else {
-          console.error('Stock modal not found');
-        }
+        new AddPage(this.parent).render();
       });
     } else {
       console.warn('Add button not found');
+    }
+    const editButton = document.getElementById('edit-button');
+    if (editButton) {
+      editButton.addEventListener('click', this.clickEdit.bind(this));
+    } else if (this.selectedCardId !== null) {
+      console.warn('Edit button not found');
     }
   }
 
@@ -440,7 +680,7 @@ class MainPage {
     this.addListeners();
     const data = await this.getData();
     data.forEach(t => {
-      new Card(this.pageRoot).render(t, this.clickCard.bind(this));
+      new Card(this.pageRoot).render(t, this.selectCard.bind(this), this.clickCard.bind(this), t.id === this.selectedCardId);
     });
     setTimeout(() => {
       const grid = document.querySelector('.card-container');
@@ -458,51 +698,6 @@ class MainPage {
     }, 300);
   }
 }
-
-// Обработчик формы
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM fully loaded');
-  const stockForm = document.getElementById('stockForm');
-  if (stockForm) {
-    stockForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      console.log('Form submitted');
-      const body = {
-        src: document.getElementById('src').value,
-        title: document.getElementById('title').value,
-        text: document.getElementById('text').value,
-        history: document.getElementById('history').value,
-        traits: document.getElementById('traits').value,
-        care: document.getElementById('care').value
-      };
-      console.log('Sending data:', { id: 'new', body });
-
-      try {
-        console.log('Sending POST request:', { url: 'http://localhost:3000/stocks', body });
-        const response = await fetch('http://localhost:3000/stocks', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to save: ${response.status} ${response.statusText} - ${errorText}`);
-        }
-        const responseData = await response.json();
-        console.log('Data saved successfully:', responseData);
-        const modalElement = document.getElementById('stockModal');
-        const modal = bootstrap.Modal.getInstance(modalElement);
-        if (modal) modal.hide();
-        new MainPage(document.getElementById('root')).render();
-      } catch (error) {
-        console.error('Ошибка сохранения:', error);
-        alert(`Ошибка сохранения данных: ${error.message}`);
-      }
-    });
-  } else {
-    console.warn('Stock form not found in DOMContentLoaded');
-  }
-});
 
 // Инициализация приложения
 const u = document.getElementById("root");
