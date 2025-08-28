@@ -93,21 +93,22 @@ app.get('/stocks/:id', async (req, res) => {
 // POST /stocks
 app.post('/stocks', async (req, res) => {
     try {
-        const { src, title, text, history, traits, care } = req.body;
-        console.log('Получены данные для POST:', { src, title, text, history, traits, care });
-        if (!src || !title || !text || !history || !traits || !care) {
+        const { src, title, price, text, brand, composition, application } = req.body;
+        console.log('Получены данные для POST:', { src, title, price, text, brand, composition, application });
+        if (!src || !title || !price || !text || !brand || !composition || !application) {
             console.log('Ошибка: отсутствуют обязательные поля');
-            return res.status(400).json({ error: 'Заполните все поля: src, title, text, history, traits, care' });
+            return res.status(400).json({ error: 'Заполните все поля: src, title, price, text, brand, composition, application' });
         }
         const stocks = await readStocks();
         const newStock = {
             id: stocks.length ? Math.max(...stocks.map(s => s.id)) + 1 : 1,
             src,
             title,
+            price,
             text,
-            history,
-            traits,
-            care
+            brand,
+            composition,
+            application
         };
         console.log('Новая запись:', newStock);
         stocks.push(newStock);
@@ -123,11 +124,11 @@ app.post('/stocks', async (req, res) => {
 // PATCH /stocks/:id
 app.patch('/stocks/:id', async (req, res) => {
     try {
-        const { src, title, text, history, traits, care } = req.body;
-        console.log('Получены данные для PATCH:', { src, title, text, history, traits, care });
-        if (!src || !title || !text || !history || !traits || !care) {
+        const { src, title, price, text, brand, composition, application } = req.body;
+        console.log('Получены данные для PATCH:', { src, title, price, text, brand, composition, application });
+        if (!src || !title || !price || !text || !brand || !composition || !application) {
             console.log('Ошибка: отсутствуют обязательные поля');
-            return res.status(400).json({ error: 'Заполните все поля: src, title, text, history, traits, care' });
+            return res.status(400).json({ error: 'Заполните все поля: src, title, price, text, brand, composition, application' });
         }
         const id = parseInt(req.params.id);
         console.log('PATCH /stocks/:id: Поиск записи с ID:', id, 'Type:', typeof id);
@@ -142,10 +143,11 @@ app.patch('/stocks/:id', async (req, res) => {
             id,
             src,
             title,
+            price,
             text,
-            history,
-            traits,
-            care
+            brand,
+            composition,
+            application
         };
         console.log('Обновленная запись:', updatedStock);
         stocks[stockIndex] = updatedStock;

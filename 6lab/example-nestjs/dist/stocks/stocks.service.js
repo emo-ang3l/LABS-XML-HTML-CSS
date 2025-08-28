@@ -13,36 +13,41 @@ exports.StocksService = void 0;
 const common_1 = require("@nestjs/common");
 const file_service_1 = require("../file.service");
 let StocksService = class StocksService {
+    fileService;
     constructor(fileService) {
         this.fileService = fileService;
     }
-    async findAll() {
-        console.log('StocksService: Запрос всех акций');
-        return this.fileService.read();
-    }
-    async findOne(id) {
-        console.log(`StocksService: Запрос акции с id ${id}`);
-        const stocks = await this.fileService.read();
-        const stock = stocks.find(s => s.id === id);
-        if (!stock) {
-            console.log(`StocksService: Акция с id ${id} не найдена`);
-            throw new common_1.HttpException(`Акция с id ${id} не найдена`, common_1.HttpStatus.NOT_FOUND);
-        }
-        return stock;
-    }
-    async create(stock) {
-        console.log('StocksService: Создание акции:', stock);
-        if (!stock.src || !stock.title || !stock.text) {
-            console.log('StocksService: Отсутствуют обязательные поля');
-            throw new common_1.HttpException('Заполните все поля: src, title, text', common_1.HttpStatus.BAD_REQUEST);
-        }
-        const stocks = await this.fileService.read();
-        const newStock = Object.assign({ id: stocks.length ? Math.max(...stocks.map(s => s.id)) + 1 : 1 }, stock);
+    create(createStockDto) {
+        const stocks = this.fileService.read();
+        const newId = stocks.length > 0 ? Math.max(...stocks.map(s => s.id)) + 1 : 1;
+        const newStock = { id: newId, ...createStockDto };
         stocks.push(newStock);
-        console.log('StocksService: Сохранение акций:', stocks);
-        await this.fileService.write(stocks);
-        console.log('StocksService: Акция создана:', newStock);
-        return newStock;
+        this.fileService.write(stocks);
+    }
+    findAll(title) {
+        const stocks = this.fileService.read();
+        if (title) {
+            return stocks.filter(stock => stock.title.toLowerCase().includes(title.toLowerCase()));
+        }
+        return stocks;
+    }
+    findOne(id) {
+        const stocks = this.fileService.read();
+        return stocks.find(stock => stock.id === id) || null;
+    }
+    update(id, updateStockDto) {
+        const stocks = this.fileService.read();
+        const index = stocks.findIndex(stock => stock.id === id);
+        if (index === -1) {
+            throw `Stock with id ${id} not found`;
+        }
+        stocks[index] = { ...stocks[index], ...updateStockDto };
+        this.fileService.write(stocks);
+    }
+    remove(id) {
+        const stocks = this.fileService.read();
+        const updatedStocks = stocks.filter(stock => stock.id !== id);
+        this.fileService.write(updatedStocks);
     }
 };
 exports.StocksService = StocksService;

@@ -15,44 +15,72 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StocksController = void 0;
 const common_1 = require("@nestjs/common");
 const stocks_service_1 = require("./stocks.service");
+const create_stock_dto_1 = require("./dto/create-stock.dto");
+const update_stock_dto_1 = require("./dto/update-stock.dto");
 let StocksController = class StocksController {
+    stocksService;
     constructor(stocksService) {
         this.stocksService = stocksService;
     }
-    async findAll() {
-        console.log('StocksController: Обработка GET /stocks');
-        return this.stocksService.findAll();
+    create(createStockDto) {
+        this.stocksService.create(createStockDto);
+        return { message: 'Stock created successfully' };
     }
-    async findOne(id) {
-        console.log(`StocksController: Обработка GET /stocks/${id}`);
+    findAll(title) {
+        return this.stocksService.findAll(title);
+    }
+    findOne(id) {
         return this.stocksService.findOne(+id);
     }
-    async create(body) {
-        console.log('StocksController: Обработка POST /stocks с телом:', body);
-        return this.stocksService.create(body);
+    update(id, updateStockDto) {
+        this.stocksService.update(+id, updateStockDto);
+        return {
+            message: 'Stock updated successfully',
+            statusCode: common_1.HttpStatus.OK,
+        };
+    }
+    remove(id) {
+        this.stocksService.remove(+id);
+        return { message: 'Stock deleted successfully' };
     }
 };
 exports.StocksController = StocksController;
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
+    __metadata("design:paramtypes", [create_stock_dto_1.CreateStockDto]),
+    __metadata("design:returntype", void 0)
+], StocksController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('title')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Array)
 ], StocksController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", Object)
 ], StocksController.prototype, "findOne", null);
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Patch)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], StocksController.prototype, "create", null);
+    __metadata("design:paramtypes", [String, update_stock_dto_1.UpdateStockDto]),
+    __metadata("design:returntype", void 0)
+], StocksController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], StocksController.prototype, "remove", null);
 exports.StocksController = StocksController = __decorate([
     (0, common_1.Controller)('stocks'),
     __metadata("design:paramtypes", [stocks_service_1.StocksService])

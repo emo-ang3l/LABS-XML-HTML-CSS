@@ -11,53 +11,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileService = void 0;
 const common_1 = require("@nestjs/common");
-const fs_1 = require("fs");
-const path_1 = require("path");
+const fs = require("fs");
+const path = require("path");
 let FileService = class FileService {
+    filePath;
     constructor(filePath) {
-        this.filePath = filePath;
-        this.initializeFile();
+        this.filePath = path.resolve(__dirname, filePath);
     }
-    async initializeFile() {
-        try {
-            await fs_1.promises.access(this.filePath);
-            console.log(`Файл существует: ${this.filePath}`);
-        }
-        catch (error) {
-            if (error.code === 'ENOENT') {
-                console.log(`Создаём директорию и файл по пути: ${this.filePath}`);
-                const dir = (0, path_1.dirname)(this.filePath);
-                await fs_1.promises.mkdir(dir, { recursive: true });
-                await fs_1.promises.writeFile(this.filePath, JSON.stringify([], null, 2), 'utf8');
-                console.log(`Успешно создан файл ${this.filePath}`);
-            }
-            else {
-                console.error(`Ошибка проверки файла ${this.filePath}: ${error.message}`);
-                throw error;
-            }
-        }
+    read() {
+        const data = fs.readFileSync(this.filePath, 'utf8');
+        return JSON.parse(data);
     }
-    async read() {
-        try {
-            console.log(`Чтение файла: ${this.filePath}`);
-            const data = await fs_1.promises.readFile(this.filePath, 'utf8');
-            console.log(`Содержимое файла: ${data}`);
-            return JSON.parse(data);
-        }
-        catch (error) {
-            console.error(`Ошибка чтения файла ${this.filePath}: ${error.message}`);
-            throw error;
-        }
+    write(data) {
+        fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf8');
     }
-    async write(data) {
-        try {
-            console.log(`Запись в ${this.filePath}:`, JSON.stringify(data, null, 2));
-            await fs_1.promises.writeFile(this.filePath, JSON.stringify(data, null, 2), 'utf8');
-            console.log(`Успешно записано в ${this.filePath}`);
-        }
-        catch (error) {
-            console.error(`Ошибка записи в ${this.filePath}: ${error.message}`);
-            throw error;
+    add(newData) {
+        const data = this.read();
+        if (Array.isArray(data)) {
+            data.push(newData);
+            this.write(data);
         }
     }
 };

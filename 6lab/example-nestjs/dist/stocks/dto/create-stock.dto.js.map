@@ -1,1 +1,1 @@
-{"version":3,"file":"create-stock.dto.js","sourceRoot":"","sources":["../../../src/stocks/dto/create-stock.dto.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,qDAAuD;AAEvD,MAAa,cAAc;CAY1B;AAZD,wCAYC;AATC;IAFC,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,GAAE;;2CACD;AAIZ;IAFC,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,GAAE;;6CACC;AAId;IAFC,IAAA,0BAAQ,GAAE;IACV,IAAA,4BAAU,GAAE;;4CACA"}
+{"version":3,"file":"create-stock.dto.js","sourceRoot":"","sources":["../../../src/stocks/dto/create-stock.dto.ts"],"names":[],"mappings":";;;AAAA,MAAa,cAAc;IACvB,GAAG,CAAS;IACZ,KAAK,CAAS;IACd,IAAI,CAAS;CACd;AAJH,wCAIG"}

@@ -1,4 +1,4 @@
-export interface Stock {
+export declare class Stock {
     id: number;
     src: string;
     title: string;

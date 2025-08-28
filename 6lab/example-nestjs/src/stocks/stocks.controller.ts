@@ -1,26 +1,41 @@
-import { Controller, Get, Post, Body, Param, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpStatus } from '@nestjs/common';
 import { StocksService } from './stocks.service';
+import { CreateStockDto } from './dto/create-stock.dto';
+import { UpdateStockDto } from './dto/update-stock.dto';
 import { Stock } from './entities/stock.entity';
 
 @Controller('stocks')
 export class StocksController {
   constructor(private readonly stocksService: StocksService) {}
 
+  @Post()
+  create(@Body() createStockDto: CreateStockDto) {
+    this.stocksService.create(createStockDto);
+    return { message: 'Stock created successfully' };
+  }
+
   @Get()
-  async findAll(): Promise<Stock[]> {
-    console.log('StocksController: Обработка GET /stocks');
-    return this.stocksService.findAll();
+  findAll(@Query('title') title?: string): Stock[] {
+    return this.stocksService.findAll(title);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Stock> {
-    console.log(`StocksController: Обработка GET /stocks/${id}`);
+  findOne(@Param('id') id: string): Stock | null {
     return this.stocksService.findOne(+id);
   }
 
-  @Post()
-  async create(@Body() body: Omit<Stock, 'id'>): Promise<Stock> {
-    console.log('StocksController: Обработка POST /stocks с телом:', body);
-    return this.stocksService.create(body);
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateStockDto: UpdateStockDto) {
+    this.stocksService.update(+id, updateStockDto);
+    return {
+      message: 'Stock updated successfully',
+      statusCode: HttpStatus.OK,
+    };
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    this.stocksService.remove(+id);
+    return { message: 'Stock deleted successfully' };
   }
 }
