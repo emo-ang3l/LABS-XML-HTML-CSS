@@ -1,4 +1,4 @@
-// Модуль предварительной загрузки (оставляем без изменений)
+// Модуль предварительной загрузки (без изменений)
 (function () {
   const t = document.createElement("link").relList;
   if (t && t.supports && t.supports("modulepreload")) return;
@@ -110,34 +110,34 @@ class Card {
 
   textStyles = {
     fontSizeTitle: "1.2rem",
-    fontSizeText: "1rem",
-    fontWeightTitle: "bold",
-    fontWeightText: "normal",
+    fontSizeText: "2rem",
+    fontWeightTitle: "normal",
+    fontWeightText: "bold",
     color: "white",
     textShadow: "1px 1px 1px rgba(0, 0, 0, 0.4)",
     textAlign: "left",
     marginBottomTitle: "0.5rem",
     marginBottomText: "0.5rem",
     padding: "10px",
-    lineHeight: "1.5",
+    lineHeight: "1",
   };
 
   getHTML(e, isSelected) {
     return `
-      <div class="card m-2 card-hover ${isSelected ? 'border' : ''}" style="width: 330px; position: relative; border-radius: 2rem; overflow: hidden; background: #f8f9fa; ${isSelected ? 'border: 2px solid #00838f;' : ''}">
-        <div style="position: relative; width: 100%; height: 550px; overflow: hidden; border-radius: 0.5rem;">
+      <div class="card m-2 card-hover ${isSelected ? 'border' : ''}" style="width: 355px; position: relative; border-radius: 2rem; overflow: hidden; background: #f8f9fa; ${isSelected ? 'border: 2px solid #FFC107;' : ''}">
+        <div style="position: relative; width: 100%; height: 600px; overflow: hidden; border-radius: 0.5rem;">
           <img class="card-img-top card-image" src="${e.src}" alt="${e.title}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0.5rem; transition: transform 0.5s ease;">
           <div style="position: absolute; top: 12px; left: 10px; right: 10px; padding: ${this.textStyles.padding}; color: ${this.textStyles.color}; text-shadow: ${this.textStyles.textShadow}; text-align: ${this.textStyles.textAlign}; line-height: ${this.textStyles.lineHeight};">
             <h5 class="card-title mb-${this.textStyles.marginBottomTitle.replace("rem","")}" style="font-size: ${this.textStyles.fontSizeTitle}; font-weight: ${this.textStyles.fontWeightTitle};">${e.title}</h5>
             <p class="card-text mb-${this.textStyles.marginBottomText.replace("rem","")}" style="font-size: ${this.textStyles.fontSizeText}; font-weight: ${this.textStyles.fontWeightText}; line-height: ${this.textStyles.lineHeight};">${e.text}</p>
           </div>
           <div style="position: absolute; bottom: 20px; left: 95px; right: 95px;">
-            <button class="btn w-100 select-button" id="select-card-${e.id}" data-id="${e.id}" style="border-radius: 1rem; background-color: ${isSelected ? '#00838f' : '#00bcd4'}; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">${isSelected ? 'Добавлено' : 'Выбрать'}</button>
+            <button class="btn w-100 select-button" id="select-card-${e.id}" data-id="${e.id}" style="border-radius: 1rem; background-color: ${isSelected ? '#FFC107' : '#FFC107'}; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">${isSelected ? 'Добавлено' : 'Выбрать'}</button>
             <div id="quantity-div-${e.id}" style="display: none; text-align: center;">
               <input type="number" id="quantity-input-${e.id}" min="1" value="1" style="width: 60px; margin-right: 5px;">
-              <button class="btn btn-sm" id="add-to-cart-${e.id}" style="border-radius: 1rem; background-color: #00bcd4; color: white; border: none;">Добавить в корзину</button>
+              <button class="btn btn-sm" id="add-to-cart-${e.id}" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none;">Добавить в корзину</button>
             </div>
-            <button class="btn w-100 mt-2" id="click-card-${e.id}" data-id="${e.id}" style="border-radius: 1rem; background-color: #00bcd4; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">Подробнее</button>
+            <button class="btn w-100 mt-2" id="click-card-${e.id}" data-id="${e.id}" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">Подробнее</button>
           </div>
         </div>
       </div>
@@ -213,12 +213,12 @@ class DetailCard {
               <div class="accordion" id="accordion-${e.id}">
                 <div class="accordion-item" style="border: none;">
                   <h2 class="accordion-header" id="headingOne-${e.id}">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne-${e.id}" aria-expanded="true" aria-controls="collapseOne-${e.id}" style="background-color: #00bcd4; color: #fff; font-weight: bold;">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne-${e.id}" aria-expanded="true" aria-controls="collapseOne-${e.id}" style="background-color: #FFC107; color: #fff; font-weight: bold;">
                       Подробное описание
                     </button>
                   </h2>
                   <div id="collapseOne-${e.id}" class="accordion-collapse collapse show" aria-labelledby="headingOne-${e.id}" data-bs-parent="#accordion-${e.id}">
-                    <div class="accordion-body" style="font-size: 0.95rem; color: #343a40; border-left: 3px solid #00bcd4;">
+                    <div class="accordion-body" style="font-size: 0.95rem; color: #343a40; border-left: 3px solid #FFC107;">
                       ${e.description || 'Подробного описания пока нет.'}
                     </div>
                   </div>
@@ -230,11 +230,11 @@ class DetailCard {
       </div>
       <style>
         .accordion-button:not(.collapsed) {
-          background-color: #00838f;
+          background-color: #FFC107;
           color: #fff;
         }
         .accordion-button:focus {
-          box-shadow: 0 0 0 0.25rem rgba(0, 188, 212, 0.5);
+          box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.5);
         }
       </style>
     `;
@@ -262,7 +262,7 @@ class BackButton {
 
   getHTML() {
     return `
-      <button id="back-button" class="btn btn mb-3" type="button" style="border-radius: 1rem; background-color: #00bcd4; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">Назад</button>
+      <button id="back-button" class="btn btn mb-3" type="button" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">Назад</button>
     `;
   }
 
@@ -283,7 +283,7 @@ class Header {
       <div class="bg-white py-2">
         <div class="container">
           <div class="d-flex justify-content-between align-items-center">
-            <img src="https://i.pinimg.com/736x/d7/39/48/d7394825291fd4e13402f35b9cfc7858.jpg" alt="Logo" style="height: 60px; width: auto; margin-left: -5px;">
+            <h1 style="font-size: 1.5rem; font-weight: bold; color: #212529; margin-left: -5px; margin-bottom: 0;">Яндекс Крауд</h1>
             <nav class="navbar navbar-expand-lg navbar-light">
               <div class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav">
@@ -315,8 +315,8 @@ class Header {
               </div>
             </nav>
             <div class="position-relative ms-3">
-              <button id="cart-button" class="btn btn-light" style="background-color: #00bcd4; color: white;">
-                Корзина <span id="cart-count" class="badge bg-light text-dark" style="background-color: #00838f; color: white; display: none;">0</span>
+              <button id="cart-button" class="btn btn-light" style="background-color: #FFC107; color: white;">
+                Корзина <span id="cart-count" class="badge bg-light text-dark" style="background-color: #FFC107; color: white; display: none;">0</span>
               </button>
             </div>
           </div>
@@ -325,7 +325,7 @@ class Header {
       <style>
         .nav-link:hover {
           text-decoration: underline;
-          color: #00838f;
+          color: #FFC107;
         }
       </style>
     `;
@@ -369,7 +369,7 @@ class AddPage {
             <label for="description" class="form-label">Подробное описание</label>
             <textarea class="form-control" id="description" required></textarea>
           </div>
-          <button type="submit" class="btn btn-primary" style="background-color: #00bcd4; border-color: #00bcd4;">Сохранить</button>
+          <button type="submit" class="btn btn-primary" style="background-color: #FFC107; border-color: #FFC107;">Сохранить</button>
         </form>
       </div>
     `;
@@ -446,7 +446,7 @@ class EditPage {
             <label for="description" class="form-label">Подробное описание</label>
             <textarea class="form-control" id="description" required>${data.description || ''}</textarea>
           </div>
-          <button type="submit" class="btn btn-primary" style="background-color: #00bcd4; border-color: #00bcd4;">Сохранить</button>
+          <button type="submit" class="btn btn-primary" style="background-color: #FFC107; border-color: #FFC107;">Сохранить</button>
         </form>
       </div>
     `;
@@ -525,7 +525,7 @@ class ProductPage {
       <div id="header"></div>
       <div id="product-page" class="container mt-3">
         <div id="detail-card"></div>
-        <button id="edit-button" class="btn mt-3" style="background-color: #00bcd4; color: white; border: none; border-radius: 1rem; font-weight: bold;">Редактировать</button>
+        <button id="edit-button" class="btn mt-3" style="background-color: #FFC107; color: white; border: none; border-radius: 1rem; font-weight: bold;">Редактировать</button>
       </div>
     `;
   }
@@ -587,7 +587,7 @@ class MainPage {
     return `
       <div id="header"></div>
       <div class="container mt-3">
-        <div style="margin-bottom: 1rem; display: flex; gap: 1rem;">
+        <div style=" margarine-bottom: 1rem; display: flex; gap: 1rem;">
           <input 
             id="search-input" 
             type="text" 
@@ -602,7 +602,7 @@ class MainPage {
               background-color: #f8f9fa;
               color: #212529;
             "
-            onfocus="this.style.borderColor='#00bcd4';"
+            onfocus="this.style.borderColor='#FFC107';"
             onblur="this.style.borderColor='#444';"
           />
           <input 
@@ -623,7 +623,7 @@ class MainPage {
             "
           />
         </div>
-        <button class="btn mb-3" id="add-button" style="background-color: #00bcd4; color: white; border: none; border-radius: 1rem; font-weight: bold;">Добавить</button>
+        <button class="btn mb-3" id="add-button" style="background-color: #FFC107; color: white; border: none; border-radius: 1rem; font-weight: bold;">Добавить</button>
       </div>
       <div id="main-page" class="card-container"></div>
       <style>
