@@ -131,19 +131,32 @@ class Card {
             <h5 class="card-title mb-${this.textStyles.marginBottomTitle.replace("rem","")}" style="font-size: ${this.textStyles.fontSizeTitle}; font-weight: ${this.textStyles.fontWeightTitle};">${e.title}</h5>
             <p class="card-text mb-${this.textStyles.marginBottomText.replace("rem","")}" style="font-size: ${this.textStyles.fontSizeText}; font-weight: ${this.textStyles.fontWeightText}; line-height: ${this.textStyles.lineHeight};">${e.text}</p>
           </div>
-          <div style="position: absolute; bottom: 20px; left: 95px; right: 95px;">
+          <div class="d-flex flex-column gap-2 align-items-center" style="position: absolute; bottom: 20px; left: 95px; right: 95px;">
             <button class="btn w-100 select-button" id="select-card-${e.id}" data-id="${e.id}" style="border-radius: 1rem; background-color: ${isSelected ? '#FFC107' : '#FFC107'}; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">${isSelected ? 'Добавлено' : 'Выбрать'}</button>
-            <div id="quantity-div-${e.id}" style="display: none; text-align: center;">
-              <input type="number" id="quantity-input-${e.id}" min="1" value="1" style="width: 60px; margin-right: 5px;">
-              <button class="btn btn-sm" id="add-to-cart-${e.id}" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none;">Добавить в корзину</button>
+            <div id="quantity-div-${e.id}" class="d-flex gap-2 align-items-center" style="display: none;">
+              <input type="number" id="quantity-input-${e.id}" min="1" value="1" style="width: 55px; height: 80px; border-radius: 1rem; border: 1px; padding: 6px; font-size: 0.9rem; font-weight: bold; text-align: center; background: #ffffff5e; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+              <button class="btn btn-sm" id="add-to-cart-${e.id}" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px;">Добавить в корзину</button>
             </div>
-            <button class="btn w-100 mt-2" id="click-card-${e.id}" data-id="${e.id}" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">Подробнее</button>
+            <button class="btn w-100" id="click-card-${e.id}" data-id="${e.id}" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">Подробнее</button>
           </div>
         </div>
       </div>
       <style>
         .btn:hover { transform: scale(1.05); }
         .card-hover:hover .card-image { transform: scale(1.1); }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        input[type=number] {
+          -moz-appearance: textfield;
+        }
+        input[type=number]:hover,
+        input[type=number]:focus {
+          border-color: #e0a800;
+          outline: none;
+        }
       </style>
     `;
   }
@@ -154,7 +167,7 @@ class Card {
       selectButton.addEventListener("click", () => {
         selectButton.style.display = 'none';
         const quantityDiv = document.getElementById(`quantity-div-${e.id}`);
-        if (quantityDiv) quantityDiv.style.display = 'block';
+        if (quantityDiv) quantityDiv.style.display = 'flex';
       });
     } else {
       console.warn(`Select button select-card-${e.id} not found`);
@@ -262,7 +275,7 @@ class BackButton {
 
   getHTML() {
     return `
-      <button id="back-button" class="btn btn mb-3" type="button" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">Назад</button>
+      <button id="back-button" class="btn" type="button" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px; transition: transform 0.3s ease;">Назад</button>
     `;
   }
 
@@ -280,7 +293,7 @@ class Header {
 
   getHTML() {
     return `
-      <div class="bg-white py-2">
+      <div class="bg-white py-2" style="width: 100%; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
         <div class="container">
           <div class="d-flex justify-content-between align-items-center">
             <h1 style="font-size: 1.5rem; font-weight: bold; color: #212529; margin-left: -5px; margin-bottom: 0;">Яндекс Крауд</h1>
@@ -315,8 +328,8 @@ class Header {
               </div>
             </nav>
             <div class="position-relative ms-3">
-              <button id="cart-button" class="btn btn-light" style="background-color: #FFC107; color: white;">
-                Корзина <span id="cart-count" class="badge bg-light text-dark" style="background-color: #FFC107; color: white; display: none;">0</span>
+              <button id="cart-button" class="btn" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px;">
+                Корзина <span id="cart-count" class="badge" style="background-color: #343a40; color: white; border-radius: 12px; padding: 4px 8px; font-size: 0.75rem; font-weight: bold; position: absolute; top: -10px; right: -10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); display: none;">0</span>
               </button>
             </div>
           </div>
@@ -350,7 +363,7 @@ class AddPage {
   getHTML() {
     return `
       <div id="header"></div>
-      <div id="add-page" class="container mt-3">
+      <div id="add-page" class="container mt-3" style="margin-top: 3.75rem;">
         <h2 class="mb-4">Добавить</h2>
         <form id="stockForm">
           <div class="mb-3">
@@ -369,7 +382,10 @@ class AddPage {
             <label for="description" class="form-label">Подробное описание</label>
             <textarea class="form-control" id="description" required></textarea>
           </div>
-          <button type="submit" class="btn btn-primary" style="background-color: #FFC107; border-color: #FFC107;">Сохранить</button>
+          <div class="d-flex gap-2 align-items-center mt-3">
+            <button type="submit" class="btn" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px;">Сохранить</button>
+            <button id="back-button" class="btn" type="button" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px;">Назад</button>
+          </div>
         </form>
       </div>
     `;
@@ -401,6 +417,12 @@ class AddPage {
     } else {
       console.warn('Stock form not found');
     }
+    const backButton = document.getElementById("back-button");
+    if (backButton) {
+      backButton.addEventListener("click", this.clickBack.bind(this));
+    } else {
+      console.warn('Back button not found');
+    }
   }
 
   render() {
@@ -408,7 +430,6 @@ class AddPage {
     const e = this.getHTML();
     this.parent.insertAdjacentHTML("beforeend", e);
     new Header(document.getElementById("header")).render();
-    new BackButton(this.pageRoot).render(this.clickBack.bind(this));
     this.addListeners();
   }
 }
@@ -426,7 +447,7 @@ class EditPage {
   getHTML(data) {
     return `
       <div id="header"></div>
-      <div id="edit-page" class="container mt-3">
+      <div id="edit-page" class="container mt-3" style="margin-top: 3.75rem;">
         <h2 class="mb-4">Редактировать персонажа</h2>
         <form id="stockForm">
           <input type="hidden" id="stockId" value="${data.id}">
@@ -446,7 +467,10 @@ class EditPage {
             <label for="description" class="form-label">Подробное описание</label>
             <textarea class="form-control" id="description" required>${data.description || ''}</textarea>
           </div>
-          <button type="submit" class="btn btn-primary" style="background-color: #FFC107; border-color: #FFC107;">Сохранить</button>
+          <div class="d-flex gap-2 align-items-center mt-3">
+            <button type="submit" class="btn" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px;">Сохранить</button>
+            <button id="back-button" class="btn" type="button" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px;">Назад</button>
+          </div>
         </form>
       </div>
     `;
@@ -497,6 +521,12 @@ class EditPage {
     } else {
       console.warn('Stock form not found');
     }
+    const backButton = document.getElementById("back-button");
+    if (backButton) {
+      backButton.addEventListener("click", this.clickBack.bind(this));
+    } else {
+      console.warn('Back button not found');
+    }
   }
 
   async render() {
@@ -505,7 +535,6 @@ class EditPage {
     const e = this.getHTML(data);
     this.parent.insertAdjacentHTML("beforeend", e);
     new Header(document.getElementById("header")).render();
-    new BackButton(this.pageRoot).render(this.clickBack.bind(this));
     this.addListeners();
   }
 }
@@ -523,9 +552,12 @@ class ProductPage {
   getHTML() {
     return `
       <div id="header"></div>
-      <div id="product-page" class="container mt-3">
+      <div id="product-page" class="container mt-3" style="margin-top: 3.75rem;">
         <div id="detail-card"></div>
-        <button id="edit-button" class="btn mt-3" style="background-color: #FFC107; color: white; border: none; border-radius: 1rem; font-weight: bold;">Редактировать</button>
+        <div class="d-flex gap-2 align-items-center mt-3">
+          <button id="edit-button" class="btn" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px;">Редактировать</button>
+          <button id="back-button" class="btn" type="button" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px;">Назад</button>
+        </div>
       </div>
     `;
   }
@@ -562,12 +594,15 @@ class ProductPage {
     const e = this.getHTML();
     this.parent.insertAdjacentHTML("beforeend", e);
     new Header(document.getElementById("header")).render();
-    new BackButton(this.pageRoot).render(this.clickBack.bind(this));
     const t = await this.getData();
     new DetailCard(document.getElementById('detail-card')).render(t);
     const editButton = document.getElementById('edit-button');
     if (editButton) {
       editButton.addEventListener('click', this.clickEdit.bind(this));
+    }
+    const backButton = document.getElementById("back-button");
+    if (backButton) {
+      backButton.addEventListener("click", this.clickBack.bind(this));
     }
   }
 }
@@ -586,21 +621,17 @@ class MainPage {
   getHTML() {
     return `
       <div id="header"></div>
-      <div class="container mt-3">
-        <div style=" margarine-bottom: 1rem; display: flex; gap: 1rem;">
+      <div class="container mt-3" style="margin-top: 3.75rem;">
+        <div class="d-flex gap-2 align-items-center mb-3">
           <input 
             id="search-input" 
             type="text" 
             placeholder="Поиск по имени..." 
+            class="form-control"
             style="
-              padding: 0.5rem 1rem;
               flex: 1;
-              border: 1px solid #444;
-              border-radius: 8px;
-              outline: none;
+              border-radius: 13px;
               font-size: 1rem;
-              background-color: #f8f9fa;
-              color: #212529;
             "
             onfocus="this.style.borderColor='#FFC107';"
             onblur="this.style.borderColor='#444';"
@@ -610,20 +641,18 @@ class MainPage {
             type="number" 
             min="1" 
             value="${this.limit}" 
+            class="form-control"
             style="
               width: 80px;
-              padding: 0.5rem;
-              border: 1px solid #444;
-              border-radius: 8px;
-              outline: none;
+              border-radius: 13px;
               font-size: 1rem;
               text-align: center;
-              background-color: #f8f9fa;
-              color: #212529;
             "
           />
         </div>
-        <button class="btn mb-3" id="add-button" style="background-color: #FFC107; color: white; border: none; border-radius: 1rem; font-weight: bold;">Добавить</button>
+        <div class="d-flex gap-2 align-items-center mb-3">
+          <button class="btn" id="add-button" style="border-radius: 1rem; background-color: #FFC107; color: white; border: none; font-weight: bold; padding: 8px 16px;">Добавить</button>
+        </div>
       </div>
       <div id="main-page" class="card-container"></div>
       <style>
