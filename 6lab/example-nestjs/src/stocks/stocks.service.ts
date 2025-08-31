@@ -1,48 +1,53 @@
 import { Injectable } from '@nestjs/common';
-import { FileService } from '../file.service';
-import { Stock } from './entities/stock.entity';
-import { CreateStockDto } from './dto/create-stock.dto';
-import { UpdateStockDto } from './dto/update-stock.dto';
-import e from 'express';
+import { promises as fs } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class StocksService {
-  constructor(private fileService: FileService<Stock[]>) {}
+  private readonly stocksFile = join(__dirname, '..', '..', 'src', 'assets', 'stocks.json');
 
-  create(createStockDto: CreateStockDto): void {
-    const stocks = this.fileService.read();
-    const newId = stocks.length > 0 ? Math.max(...stocks.map(s => s.id)) + 1 : 1;
-    const newStock = { id: newId, ...createStockDto };
+  async initializeStocksFile() {
+    try {
+      await fs.access(this.stocksFile);
+      console.log('stocks.json найден');
+    } catch {
+      console.log('Создаём новый stocks.json');
+      await fs.writeFile(this.stocksFile, JSON.stringify([], null, 2));
+    }
+  }
+
+  async findAll() {
+    try {
+      const data = await fs.readFile(this.stocksFile, 'utf8');
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error('Ошибка чтения stocks.json:', error.message);
+      throw error;
+    }
+  }
+
+  async findOne(id: number) {
+    const stocks = await this.findAll();
+    return stocks.find((s: any) => s.id === id);
+  }
+
+  async create(stock: { src: string; title: string; text: string; description: string }) {
+    const stocks = await this.findAll();
+    const newStock = {
+      id: stocks.length ? Math.max(...stocks.map((s: any) => s.id)) + 1 : 1,
+      ...stock,
+    };
     stocks.push(newStock);
-    this.fileService.write(stocks);
+    await fs.writeFile(this.stocksFile, JSON.stringify(stocks, null, 2));
+    return newStock;
   }
 
-  findAll(title?: string): Stock[] {
-    const stocks = this.fileService.read();
-    if (title) {
-      return stocks.filter(stock => stock.title.toLowerCase().includes(title.toLowerCase()));
-    }
-    return stocks;
-  }
-
-  findOne(id: number): Stock | null {
-    const stocks = this.fileService.read();
-    return stocks.find(stock => stock.id === id) || null;
-  }
-
-  update(id: number, updateStockDto: UpdateStockDto): void {
-      const stocks = this.fileService.read();
-      const index = stocks.findIndex(stock => stock.id === id);
-      if (index === -1) {
-        throw `Stock with id ${id} not found`;
-      }
-      stocks[index] = { ...stocks[index], ...updateStockDto };
-      this.fileService.write(stocks);
-    }
-
-  remove(id: number): void {
-    const stocks = this.fileService.read();
-    const updatedStocks = stocks.filter(stock => stock.id !== id);
-    this.fileService.write(updatedStocks);
+  async update(id: number, stock: { src: string; title: string; text: string; description: string }) {
+    const stocks = await this.findAll();
+    const stockIndex = stocks.findIndex((s: any) => s.id === id);
+    if (stockIndex === -1) return null;
+    stocks[stockIndex] = { id, ...stock };
+    await fs.writeFile(this.stocksFile, JSON.stringify(stocks, null, 2));
+    return stocks[stockIndex];
   }
 }

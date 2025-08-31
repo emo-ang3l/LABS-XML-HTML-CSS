@@ -1,13 +1,24 @@
-import { FileService } from '../file.service';
-import { Stock } from './entities/stock.entity';
-import { CreateStockDto } from './dto/create-stock.dto';
-import { UpdateStockDto } from './dto/update-stock.dto';
 export declare class StocksService {
-    private fileService;
-    constructor(fileService: FileService<Stock[]>);
-    create(createStockDto: CreateStockDto): void;
-    findAll(title?: string): Stock[];
-    findOne(id: number): Stock | null;
-    update(id: number, updateStockDto: UpdateStockDto): void;
-    remove(id: number): void;
+    private readonly stocksFile;
+    initializeStocksFile(): Promise<void>;
+    findAll(): Promise<any>;
+    findOne(id: number): Promise<any>;
+    create(stock: {
+        src: string;
+        title: string;
+        text: string;
+        description: string;
+    }): Promise<{
+        src: string;
+        title: string;
+        text: string;
+        description: string;
+        id: number;
+    }>;
+    update(id: number, stock: {
+        src: string;
+        title: string;
+        text: string;
+        description: string;
+    }): Promise<any>;
 }

@@ -1,41 +1,66 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { StocksService } from './stocks.service';
-import { CreateStockDto } from './dto/create-stock.dto';
-import { UpdateStockDto } from './dto/update-stock.dto';
-import { Stock } from './entities/stock.entity';
 
 @Controller('stocks')
 export class StocksController {
   constructor(private readonly stocksService: StocksService) {}
 
-  @Post()
-  create(@Body() createStockDto: CreateStockDto) {
-    this.stocksService.create(createStockDto);
-    return { message: 'Stock created successfully' };
-  }
-
   @Get()
-  findAll(@Query('title') title?: string): Stock[] {
-    return this.stocksService.findAll(title);
+  async findAll() {
+    try {
+      return await this.stocksService.findAll();
+    } catch (error) {
+      throw new HttpException('Ошибка при получении данных', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Stock | null {
-    return this.stocksService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    try {
+      const stock = await this.stocksService.findOne(+id);
+      if (!stock) {
+        throw new HttpException(`Запись с ID ${id} не найдена`, HttpStatus.NOT_FOUND);
+      }
+      return stock;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Ошибка сервера', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post()
+  async create(@Body() body: { src: string; title: string; text: string; description: string }) {
+    try {
+      if (!body.src || !body.title || !body.text || !body.description) {
+        throw new HttpException('Заполните все поля: src, title, text, description', HttpStatus.BAD_REQUEST);
+      }
+      return await this.stocksService.create(body);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Ошибка при создании записи', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStockDto: UpdateStockDto) {
-    this.stocksService.update(+id, updateStockDto);
-    return {
-      message: 'Stock updated successfully',
-      statusCode: HttpStatus.OK,
-    };
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    this.stocksService.remove(+id);
-    return { message: 'Stock deleted successfully' };
+  async update(@Param('id') id: string, @Body() body: { src: string; title: string; text: string; description: string }) {
+    try {
+      if (!body.src || !body.title || !body.text || !body.description) {
+        throw new HttpException('Заполните все поля: src, title, text, description', HttpStatus.BAD_REQUEST);
+      }
+      const stock = await this.stocksService.update(+id, body);
+      if (!stock) {
+        throw new HttpException(`Запись с ID ${id} не найдена`, HttpStatus.NOT_FOUND);
+      }
+      return stock;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Ошибка при обновлении записи', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
